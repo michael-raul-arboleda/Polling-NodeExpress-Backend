@@ -22,6 +22,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+app.use("/api/posts", (req, res, next) => {
+  const posts = [
+    {id: '1', title: 'Node Post', content: 'Frosted Flakes are great!'},
+    {id: '2', title: 'Lulu Post', content: 'Lulu is great!'}
+  ];
+  res.status(200).json({
+    message: 'Post fetched succesfully',
+    posts: posts
+  });
+});
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -37,5 +49,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+
 
 module.exports = app;
