@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var bodyParser = require("body-parser");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -19,10 +20,34 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.use((req, res, next) =>{
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PATCH, DELETE, OPTIONS"
+  );
+  next();
+});
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-app.use("/api/posts", (req, res, next) => {
+app.post("/api/posts", (req, res, next) => {
+  const post = req.body;
+  console.log(post);
+  res.status(201).json({
+    message: 'Post added successfully'
+  });
+});
+
+app.get("/api/posts", (req, res, next) => {
   const posts = [
     {id: '1', title: 'Node Post', content: 'Frosted Flakes are great!'},
     {id: '2', title: 'Lulu Post', content: 'Lulu is great!'}
