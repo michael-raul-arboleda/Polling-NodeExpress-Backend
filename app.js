@@ -4,11 +4,21 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require("body-parser");
+var mongoose = require("mongoose");
+
+var Post = require('./models/post');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+mongoose.connect("mongodb+srv://Admin:ufn8xxs9R1dIPD9i@cluster0-mt9pz.mongodb.net/test?retryWrites=true&w=majority")
+    .then(() => {
+        console.log('Connected to database!')
+    })
+    .catch(() => {
+        console.log('Connection failed');
+    });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -50,7 +60,10 @@ app.options("/*", function(req, res, next){
 });
 
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
+  const post = new Post({
+      title: req.body.title,
+      content: req.body.content
+  });
   console.log(post);
   res.status(201).json({
     message: 'Post added successfully'
