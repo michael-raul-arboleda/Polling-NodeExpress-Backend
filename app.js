@@ -12,7 +12,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-mongoose.connect("mongodb+srv://Admin:ufn8xxs9R1dIPD9i@cluster0-mt9pz.mongodb.net/test?retryWrites=true&w=majority")
+mongoose.connect("mongodb+srv://Admin:ufn8xxs9R1dIPD9i@cluster0-mt9pz.mongodb.net/node-angular?retryWrites=true&w=majority")
     .then(() => {
         console.log('Connected to database!')
     })
@@ -64,23 +64,43 @@ app.post("/api/posts", (req, res, next) => {
       title: req.body.title,
       content: req.body.content
   });
-  console.log(post);
-  res.status(201).json({
-    message: 'Post added successfully'
+  post.save().then( result => {
+    res.status(201).json({
+      message: 'Post added successfully',
+      postId: result._id
+    });
   });
 });
 
 app.get("/api/posts", (req, res, next) => {
-  const posts = [
-    {id: '1', title: 'Node Post', content: 'Frosted Flakes are great!'},
-    {id: '2', title: 'Lulu Post', content: 'Lulu is great!'}
-  ];
-  res.status(200).json({
-    message: 'Post fetched succesfully',
-    posts: posts
-  });
+  Post.find()
+      .then(documents => {
+        console.log(documents);
+        res.status(200).json({
+          message: 'Post fetched succesfully',
+          posts: documents
+        });
+      });
 });
 
+app.put('/api/posts/:id', (req, res, next) => {
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+  Post.updateOne({_id: req.params.id}, post)
+      .then(result => {
+        res.status(200).json({ message: 'Successful update!'})
+      });
+});
+
+app.delete("/api/posts/:id", (req, res, next) => {
+  console.log('Hello\t' + req.params.id);
+  Post.deleteOne({_id: req.params.id}).then(result => {
+    console.log(result);
+    res.status(200).json({message: 'Post Deleted!'});
+  });
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
