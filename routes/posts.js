@@ -19,10 +19,10 @@ const storage = multer.diskStorage({
        if(isValid){
            error = null;
        }
-       cb(error, '../user_uploaded_images');
+       cb(error, './user_uploaded_images');
     },
     filename: (req, file, cb) => {
-        const name = file.orginalname.toLowerCase().split(' ').join('-');
+        const name = file.originalname.toLowerCase().split(' ').join('-');
         const ext = MIME_TYPE_MAP[file.mimetype];
         const fullFillName = name + '-' + Date.now() + '.' + ext;
         cb(null, fullFillName);
@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
 });
 
 
-router.post("", multer(storage).single('image'), (req, res, next) => {
+router.post("", multer({storage: storage}).single("image"), (req, res, next) => {
     const post = new Post({
         title: req.body.title,
         content: req.body.content
