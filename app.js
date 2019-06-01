@@ -20,6 +20,7 @@ mongoose.connect("mongodb+srv://Admin:ufn8xxs9R1dIPD9i@cluster0-mt9pz.mongodb.ne
         console.log('Connection failed');
     });
 
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -48,6 +49,7 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use("/images", express.static(path.join(__dirname, "user_uploaded_images/")));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
