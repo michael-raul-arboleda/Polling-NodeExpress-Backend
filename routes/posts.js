@@ -75,7 +75,16 @@ router.put(
 );
 
 router.get("", (req, res, next) => {
-    Post.find().then(documents => {
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const postQuery = Post.find();
+    if (pageSize && currentPage) {
+        const numPagesToSkip = pageSize * (currentPage-1);
+        postQuery
+            .skip(numPagesToSkip)
+            .limit(pageSize);
+    }
+    postQuery.then(documents => {
         res.status(200).json({
             message: "Posts fetched successfully!",
             posts: documents
